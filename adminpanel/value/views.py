@@ -32,6 +32,11 @@ class ValueUpdateView(CheckPermission, generics.UpdateAPIView):
     serializer_class = ValueSerial
     lookup_field = 'pk'
 
+@api_view(['PUT'])
+def update_value(request, pk):
+    print(request.data)
+    return Response(status=200)
+
 class ValueDeleteView(CheckPermission, generics.DestroyAPIView):
     queryset = Value.objects.all()
     serializer_class = ValueSerial

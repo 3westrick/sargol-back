@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from product.models import Product
+from product.models import Product, Image, ProductAttribute
+from adminpanel.attribute.serial import AttributeSerial, InlineValueSerial
 
 class InlineProductSerial(serializers.ModelSerializer):
     class Meta:
@@ -29,11 +30,31 @@ class InlineVariantSerial(serializers.ModelSerializer):
             'mpn',
         ]
 
+class ProductGallery(serializers.ModelSerializer):
+    class Meta:
+        model = Image
+        fields = [
+            'id',
+            'image',
+        ]
+
+class ProductAttributeSerial(serializers.ModelSerializer):
+    attribute = AttributeSerial(read_only=True)
+    class Meta:
+        model = ProductAttribute
+        fields = [
+            'attribute',
+            'variant',
+            'visible'
+        ]
+
 
 class ProductSerial(serializers.ModelSerializer):
     # parent_product = InlineProductSerial(read_only=True, source='parent')
     variants = InlineVariantSerial(read_only=True, many=True)
-    
+    gallery = ProductGallery(read_only=True, many=True)
+    attributes = ProductAttributeSerial(read_only=True, many=True)
+
     class Meta:
         model = Product
         fields = [
@@ -67,26 +88,58 @@ class ProductSerial(serializers.ModelSerializer):
 
             'attributes',
             'values',
-            'visibleAttributes',
-            'variantAttributes',
             
-            'variants'
+            'variants',
 
-            # 'parent', 
-            # 'parent_product',
+            'gallery'
+
             ]
+        
 
+class ProductSingleSerial(serializers.ModelSerializer):
+    variants = InlineVariantSerial(read_only=True, many=True)
+    gallery = ProductGallery(read_only=True, many=True)
+    attributes = ProductAttributeSerial(read_only=True, many=True)
+    values = InlineValueSerial(read_only=True, many=True)
+    class Meta:
+        model = Product
+        fields = [
+            'id',
+            'title', 
+            'slug', 
+            'description', 
+            'short_description', 
 
+            'categories',
+            'image',
 
-    def create(self, validated_data):
-        if validated_data.get('image', None) == None:
-            validated_data['image'] = 'bb.png'
-        return super().create(validated_data)
+            'regular_price',
+            'sale_price',
+            'tax_status',
+            'tax_class',
 
-    def update(self, instance, validated_data):
-        if validated_data.get('image', None) == None:
-            validated_data['image'] = instance.image
-        return super().update(instance, validated_data)
+            'sku',
+            'mpn',
+            'stock_management',
+            'stock_status',
+            'sold_individually',
+            'stock',
+            'unit',
+
+            'weight',
+            'length',
+            'width',
+            'height',
+            'shipping_class',
+
+            'attributes',
+            'values',
+            
+            'variants',
+
+            'gallery'
+
+            ]
     
 
 class ProductSecondSerial(serializers.ModelSerializer):

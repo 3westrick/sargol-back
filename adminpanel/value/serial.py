@@ -14,7 +14,6 @@ class ValueSerial(serializers.ModelSerializer):
         fields = ['id','title', 'slug', 'image','color']
     
     def update(self, instance, validated_data):
-        print(validated_data.get('image'))
         if validated_data.get('image', None) == None:
             validated_data['image'] = instance.image
         return super().update(instance, validated_data)

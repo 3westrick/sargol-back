@@ -1,7 +1,9 @@
+from typing import Any
 from django.db import models
 from attribute.models import Attribute
 from value.models import Value
 from category.models import Category
+import os
 
 # Create your models here.
 class Product(models.Model):
@@ -39,13 +41,24 @@ class Product(models.Model):
     shipping_class= models.CharField(max_length=50)
 
     # attributes
-    attributes= models.ManyToManyField(Attribute, related_name="products")
+    # attributes= models.ManyToManyField(Attribute, related_name="products")
     # selectedValues: {},
     values = models.ManyToManyField(Value, related_name="products")
-    visibleAttributes= models.ManyToManyField(Attribute, related_name="visible_products",blank=True)
-    variantAttributes= models.ManyToManyField(Attribute, related_name="variant_products",blank=True)
+    # visibleAttributes= models.ManyToManyField(Attribute, related_name="visible_products",blank=True)
+    # variantAttributes= models.ManyToManyField(Attribute, related_name="variant_products",blank=True)
 
     parent = models.ForeignKey('self',default=None ,null=True, on_delete=models.SET_NULL, related_name="variants")
     
     def __str__(self) -> str:
         return self.title
+
+class ProductAttribute(models.Model):
+    attribute = models.ForeignKey(Attribute, on_delete=models.CASCADE,related_name="products")
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="attributes")
+    variant= models.BooleanField(default=False)
+    visible= models.BooleanField(default=False)
+
+
+class Image(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="gallery")
+    image = models.ImageField(null=True, blank=True)
