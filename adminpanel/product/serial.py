@@ -7,12 +7,25 @@ class InlineProductSerial(serializers.ModelSerializer):
         model = Product
         fields = ['id','title', 'slug',]
 
+class ProductGallery(serializers.ModelSerializer):
+    class Meta:
+        model = Image
+        fields = [
+            'id',
+            'image',
+        ]
+
 class InlineVariantSerial(serializers.ModelSerializer):
+    gallery = ProductGallery(read_only=True, many=True)
     class Meta:
         model= Product
         fields = [
+            'id',
             'sku',
+            'title',
+            'slug',
             'attributes',
+            'values',
             'regular_price',
             'sale_price',
 
@@ -28,15 +41,11 @@ class InlineVariantSerial(serializers.ModelSerializer):
 
             'description',
             'mpn',
+
+            'image',
+            'gallery'
         ]
 
-class ProductGallery(serializers.ModelSerializer):
-    class Meta:
-        model = Image
-        fields = [
-            'id',
-            'image',
-        ]
 
 class ProductAttributeSerial(serializers.ModelSerializer):
     attribute = AttributeSerial(read_only=True)
@@ -46,6 +55,39 @@ class ProductAttributeSerial(serializers.ModelSerializer):
             'attribute',
             'variant',
             'visible'
+        ]
+
+class VariantSerial(serializers.ModelSerializer):
+    gallery = ProductGallery(read_only=True, many=True)
+    attributes = ProductAttributeSerial(read_only=True, many=True)
+    class Meta:
+        model= Product
+        fields = [
+            'sku',
+            'title',
+            'slug',
+            'attributes',
+            'values',
+            'regular_price',
+            'sale_price',
+
+            'stock',
+
+            'weight',
+            'length',
+            'width',
+            'height',
+            'shipping_class',
+
+            'tax_class',
+
+            'description',
+            'mpn',
+
+            'image',
+            'gallery',
+
+            'parent'
         ]
 
 
