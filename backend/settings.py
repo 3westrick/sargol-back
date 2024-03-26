@@ -42,17 +42,19 @@ INSTALLED_APPS = [
     "corsheaders",
     'rest_framework',
     'rest_framework.authtoken',
-    'rest_framework_simplejwt',
+    'rest_framework_simplejwt', 
+    'django_filters',
 
     "base",
     'category',
     'attribute',
     'value',
     'product',
+    'coupon',
 
     'images',
 
-    'custom',
+    # 'custom',
 
     "adminpanel",
 ]
@@ -152,6 +154,8 @@ REST_FRAMEWORK = {
     #     "rest_framework.authentication.SessionAuthentication",
     #     "rest_framework.authentication.TokenAuthentication",
     # ]
+    # "DEFAULT_PAGINATION_CLASS" : "rest_framework.pagination.LimitOffsetPagination",
+    # "PAGE_SIZE": 10,
 }
 
 SIMPLE_JWT = {

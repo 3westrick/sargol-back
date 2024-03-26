@@ -27,7 +27,6 @@ urlpatterns = [
     path("values/", include('value.urls')),
     path("images/", include('images.urls')),
 
-    path("custom/", include('custom.urls')),
 
 
     path("", include('base.urls'))

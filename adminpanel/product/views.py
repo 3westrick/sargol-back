@@ -10,12 +10,33 @@ import time
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
-
+# from adminpanel.product.filters import ProductFilter
+from base.pagination import ModelPaginateAndFilter,ModelPaginateAndFilterSecond
+import django_filters
 # Create your views here.
 
-class ProductListView(CheckPermission, generics.ListAPIView):
+class ProductFilter(django_filters.FilterSet):
+    class Meta:
+        model = Product
+        # fields = ['title']
+        fields = {
+            'tax_status': ['exact'],
+            'tax_class': ['exact'],
+            'stock_management': ['exact'],
+            'stock_status': ['exact'],
+
+            'sold_individually': ['exact'],
+            'unit': ['icontains'],
+            'shipping_class': ['exact'],
+        }
+
+class ProductListView(CheckPermission, ModelPaginateAndFilterSecond, generics.ListAPIView):
     queryset = Product.objects.filter(parent=None)
     serializer_class = ProductSerial
+    # search_fields = ['id','title', 'slug', 'description', 'short_description', 'sku', 'mpn', ]
+    search_fields = ['id', 'title']
+    ordering_fields = ['id','title', 'slug']
+    filterset_class = ProductFilter
 
 
     

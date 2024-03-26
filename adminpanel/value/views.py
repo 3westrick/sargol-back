@@ -6,13 +6,26 @@ from adminpanel.value.serial import ValueSerial, ValueAttributeSerial
 
 from rest_framework import generics, mixins, permissions, authentication
 from base.mixins import CheckPermission
+from base.pagination import ModelPaginateAndFilter, ModelPaginateAndFilterSecond
+import django_filters
+
 
 # Create your views here.
 
-class ValueListView(CheckPermission, generics.ListAPIView):
+class ValueFilter(django_filters.FilterSet):
+    class Meta:
+        model = Value
+        # fields = ['title']
+        fields = {
+            'attribute__id': ['exact'],
+        }
+
+class ValueListView(CheckPermission, ModelPaginateAndFilterSecond,generics.ListAPIView):
     queryset = Value.objects.all()
     serializer_class = ValueAttributeSerial
-    # authentication_classes = [] # removes all auth methos
+    search_fields = ['title', 'slug']
+    ordering_fields = ['id','title','slug']
+    filterset_class = ValueFilter
 
     
 class ValueRetriveView(CheckPermission, generics.RetrieveAPIView):

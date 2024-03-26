@@ -10,7 +10,11 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         token = super().get_token(user)
         token['username'] = user.username
         token['email'] = user.email
-        token['role'] = user.is_staff or user.is_superuser
+        if user.is_superuser:
+            token['role'] = 1
+        elif user.is_staff:
+            token['role'] = 2
+        # elif 
         return token
 
 class UserSerializer(serializers.ModelSerializer):

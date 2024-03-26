@@ -1,0 +1,47 @@
+from rest_framework import serializers
+from base.models import User
+from django.contrib.auth.password_validation import validate_password
+from django.contrib.auth.hashers import make_password
+
+class UserSerial(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = [
+            'id',
+            'username',
+            'email'
+            ]
+        
+class UserPermission(serializers.ModelSerializer):
+    class Meta: 
+        model = User
+        fields = [
+            'user_permissions'
+        ]
+    
+class UserTestSerial(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True, validators=[validate_password], allow_blank=True)
+
+    class Meta:
+        model = User
+        fields = [
+            'id',
+            'username',
+            'password',
+            'email',
+            'user_permissions',
+            'groups',
+            'is_staff'
+            ]
+    
+    def create(self, validated_data):
+        validated_data['password'] = make_password(validated_data.get('password'))
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        if len(validated_data['password']) == 0:
+            validated_data['password'] = instance.password
+        else:
+            validated_data['password'] = make_password(validated_data.get('password'))
+        return super().update(instance, validated_data)

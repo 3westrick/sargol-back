@@ -1,7 +1,7 @@
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAdminUser, DjangoModelPermissions
 from rest_framework_simplejwt.authentication import JWTAuthentication
-
+    
 class ModelPermission(DjangoModelPermissions):
 
     perms_map = {

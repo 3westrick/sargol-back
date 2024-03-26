@@ -7,4 +7,8 @@ urlpatterns = [
     path("values/", include('adminpanel.value.urls')),
     path("categories/", include('adminpanel.category.urls')),
     path("products/", include('adminpanel.product.urls')),
+    path("coupons/", include('adminpanel.coupon.urls')),
+    path("users/", include('adminpanel.user.urls')),
+    path("permissions/", include('adminpanel.permissions.urls')),
+    path("groups/", include('adminpanel.groups.urls')),
 ]

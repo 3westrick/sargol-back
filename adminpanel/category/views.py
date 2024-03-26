@@ -3,20 +3,19 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from category.models import Category
 from adminpanel.category.serial import CategorySerial, CategoryProductSerial
-
-from rest_framework import generics, mixins, permissions, authentication
+# from django_filters import rest_framework as filters
+from rest_framework import generics
 from base.mixins import CheckPermission
-import time
-
+# from adminpanel.category.filters import CategoryFilter
+from base.pagination import ModelPaginateAndFilter
 # Create your views here.
 
-class CategoryListView(CheckPermission,generics.ListAPIView):
+class CategoryListView(CheckPermission, ModelPaginateAndFilter,generics.ListAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerial
-    
-    def list(self, request, *args, **kwargs):
-        # time.sleep(2)
-        return super().list(request, *args, **kwargs)
+    search_fields = ['title', 'slug']
+    ordering_fields = ['id','title', 'slug', 'parent']
+
     
 class CategoryProductListView(CheckPermission,generics.ListAPIView):
     queryset = Category.objects.filter(parent=None)
