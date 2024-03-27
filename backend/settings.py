@@ -54,7 +54,7 @@ INSTALLED_APPS = [
 
     'images',
 
-    # 'custom',
+    'order',
 
     "adminpanel",
 ]

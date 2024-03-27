@@ -1,5 +1,5 @@
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
-from rest_framework.permissions import IsAdminUser, DjangoModelPermissions
+from rest_framework.permissions import IsAdminUser, DjangoModelPermissions, IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
     
 class ModelPermission(DjangoModelPermissions):
@@ -21,3 +21,4 @@ class CheckPermission():
 
 class CheckAuth():
     authentication_classes = [SessionAuthentication, TokenAuthentication, JWTAuthentication]
+    permission_classes = [IsAuthenticated]
