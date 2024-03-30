@@ -11,4 +11,5 @@ urlpatterns = [
     path("users/", include('adminpanel.user.urls')),
     path("permissions/", include('adminpanel.permissions.urls')),
     path("groups/", include('adminpanel.groups.urls')),
+    path("orders/", include('adminpanel.order.urls')),
 ]

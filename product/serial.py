@@ -111,7 +111,7 @@ class ProductSerialList(serializers.ModelSerializer):
             'values',
             
             'gallery',
-            'range'
+            'range',
 
             ]
 

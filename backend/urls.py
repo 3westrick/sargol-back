@@ -22,12 +22,12 @@ urlpatterns = [
     path("adminpanel/", include('adminpanel.urls')),
 
     path("categories/", include('category.urls')),
-    # path("products/", include('product.urls')),
     path("attributes/", include('attribute.urls')),
     path("values/", include('value.urls')),
     path("images/", include('images.urls')),
     path("orders/", include('order.urls')),
     path("products/", include('product.urls')),
+    path("coupons/", include('coupon.urls')),
 
 
 

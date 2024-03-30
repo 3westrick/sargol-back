@@ -13,8 +13,8 @@ class Coupon(models.Model):
     free_shipping = models.BooleanField(default=False)
     expired_at = models.DateField()
 
-    minimum = models.PositiveIntegerField(default=0)
-    maximum = models.PositiveIntegerField(default=0)
+    minimum = models.IntegerField(default=0)
+    maximum = models.IntegerField(default=0)
     individual_use = models.BooleanField(default=False)
     exclude_sale_items = models.BooleanField(default=False) # if True coupon won't apply on items on sale
 
@@ -26,7 +26,8 @@ class Coupon(models.Model):
 
     allowed_users = models.ManyToManyField(User, related_name="coupons", blank=True)
 
-    usage_limit = models.IntegerField(default=0)
-    item_limit = models.IntegerField(default=0)
-    user_limit = models.IntegerField(default=0)
+    usage_limit = models.IntegerField(default=0,blank=True)
+    item_limit = models.IntegerField(default=0,blank=True)
+    user_limit = models.IntegerField(default=0,blank=True)
 
+    user_used = models.ManyToManyField(User, related_name="coupons_used" ,blank=True)
