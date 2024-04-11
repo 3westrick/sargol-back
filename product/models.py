@@ -19,6 +19,8 @@ class Product(models.Model):
     image = models.ImageField(null=True, blank=True)
 
     # general
+    type= models.CharField(max_length=50, choices=[['simple','simple'],['variation', 'variation'], ['variant', 'variant']])
+    backorder= models.CharField(max_length=50,default='not_allow' ,choices=[['allow','allow'],['notify', 'notify'], ['not_allow', 'not_allow']])
     regular_price= models.IntegerField(default=0)
     sale_price= models.IntegerField(default=0)
     tax_status= models.CharField(max_length=50)
@@ -28,9 +30,10 @@ class Product(models.Model):
     sku= models.CharField(max_length=50)
     mpn= models.CharField(max_length=50)
     stock_management= models.BooleanField(default=False)
-    stock_status= models.CharField(max_length=50)
+    stock_status= models.CharField(max_length=50, default='in_stock', choices=[['in_stock','in_stock'],['out_of_stock','out_of_stock'],['on_backorder','on_backorder']])
     sold_individually= models.BooleanField(default=False)
-    stock= models.IntegerField(default=0)
+    quantity= models.IntegerField(blank=True, null=True)
+    stock= models.IntegerField(blank=True, null=True)
     unit= models.CharField(max_length=50)
 
     # shipping
@@ -51,6 +54,9 @@ class Product(models.Model):
     
     def __str__(self) -> str:
         return self.title
+    
+    class Meta:
+        ordering = ["stock"]
 
 class ProductAttribute(models.Model):
     attribute = models.ForeignKey(Attribute, on_delete=models.CASCADE,related_name="products")

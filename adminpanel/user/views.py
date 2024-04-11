@@ -2,7 +2,8 @@ from base.models import User
 from adminpanel.user.serial import UserSerial, UserPermission,UserTestSerial
 from rest_framework import generics
 from base.mixins import CheckPermission
-from base.pagination import ModelPaginateAndFilterSecond
+from base.pagination import CustomLimitOffsetPagtination
+from base.filters import CustomSearch
 import django_filters
 # Create your views here.
 
@@ -19,9 +20,10 @@ class UserFilter(django_filters.FilterSet):
             'email': ['exact'],
         }
 
-class UserListView(CheckPermission, ModelPaginateAndFilterSecond, generics.ListAPIView):
+class UserListView(CheckPermission, CustomSearch, generics.ListAPIView):
     queryset = User.objects.all()
     serializer_class = UserTestSerial
+    pagination_class = CustomLimitOffsetPagtination
     # search_fields = ['id','title', 'slug', 'description', 'short_description', 'sku', 'mpn', ]
     search_fields = ['id', 'username', 'email']
     ordering_fields = ['id','username', 'email']

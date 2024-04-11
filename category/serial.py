@@ -10,4 +10,4 @@ class CategorySerial(serializers.ModelSerializer):
     parent_cat = InlineCategorySerial(read_only=True, source='parent')
     class Meta:
         model = Category
-        fields = ['title', 'slug', 'is_active', 'parent', 'parent_cat']
+        fields = ['title', 'slug', 'is_active','image', 'parent', 'parent_cat']

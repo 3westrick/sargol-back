@@ -2,6 +2,9 @@
 from django.urls import path, include
 from . import views
 urlpatterns = [
+
+    path("", views.OrderListView.as_view()),
+
     path("purchase/", views.purchase),
     path("items/", views.ItemListView.as_view()),
     path("items/create/", views.ItemCreateView.as_view()),

@@ -11,7 +11,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 # from adminpanel.product.filters import ProductFilter
-from base.pagination import ModelPaginateAndFilter,ModelPaginateAndFilterSecond
+from base.pagination import CustomLimitOffsetPagtination
+from base.filters import CustomFilter
 import django_filters
 # Create your views here.
 
@@ -30,9 +31,10 @@ class ProductFilter(django_filters.FilterSet):
             'shipping_class': ['exact'],
         }
 
-class ProductListView(CheckPermission, ModelPaginateAndFilterSecond, generics.ListAPIView):
+class ProductListView(CheckPermission, CustomFilter, generics.ListAPIView):
     queryset = Product.objects.filter(parent=None)
     serializer_class = ProductSerial
+    pagination_class = CustomLimitOffsetPagtination
     # search_fields = ['id','title', 'slug', 'description', 'short_description', 'sku', 'mpn', ]
     search_fields = ['id', 'title']
     ordering_fields = ['id','title', 'slug']

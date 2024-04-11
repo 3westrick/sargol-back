@@ -9,11 +9,13 @@ from base.mixins import CheckPermission
 from rest_framework.response import Response
 from rest_framework import status
 
-from base.pagination import ModelPaginateAndFilterSecond
+from base.pagination import CustomLimitOffsetPagtination
+from base.filters import CustomSearch
 
-class OrderListView(CheckPermission, ModelPaginateAndFilterSecond, generics.ListAPIView):
+class OrderListView(CheckPermission, CustomSearch, generics.ListAPIView):
     queryset = Order.objects.all()
     serializer_class = OrderSerial
+    pagination_class = CustomLimitOffsetPagtination
     search_fields = ['id', 'status']
     ordering_fields = ['id','status']
 

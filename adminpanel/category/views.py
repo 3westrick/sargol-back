@@ -7,12 +7,14 @@ from adminpanel.category.serial import CategorySerial, CategoryProductSerial
 from rest_framework import generics
 from base.mixins import CheckPermission
 # from adminpanel.category.filters import CategoryFilter
-from base.pagination import ModelPaginateAndFilter
+from base.pagination import CustomLimitOffsetPagtination
+from base.filters import CustomSearch
 # Create your views here.
 
-class CategoryListView(CheckPermission, ModelPaginateAndFilter,generics.ListAPIView):
+class CategoryListView(CheckPermission, CustomSearch,generics.ListAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerial
+    pagination_class = CustomLimitOffsetPagtination
     search_fields = ['title', 'slug']
     ordering_fields = ['id','title', 'slug', 'parent']
 

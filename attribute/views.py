@@ -6,12 +6,16 @@ from attribute.serial import AttributeSerial
 
 from rest_framework import generics, mixins, permissions, authentication
 from base.mixins import CheckPermission
+from base.filters import CustomFilter
 
 # Create your views here.
 
-class AttributeListView(CheckPermission, generics.ListAPIView):
+class AttributeListView(CheckPermission,CustomFilter , generics.ListAPIView):
     queryset = Attribute.objects.all()
     serializer_class = AttributeSerial
+    filterset_fields = {
+        "id": ["in"],
+    }
     # authentication_classes = [] # removes all auth methos
 
     

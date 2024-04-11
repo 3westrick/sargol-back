@@ -10,7 +10,8 @@ import time
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
-from base.pagination import ModelPaginateAndFilter,ModelPaginateAndFilterSecond
+from base.pagination import CustomPagePagination
+from base.filters import CustomFilter
 import django_filters
 # Create your views here.
 
@@ -27,15 +28,32 @@ class ProductFilter(django_filters.FilterSet):
             'sold_individually': ['exact'],
             'unit': ['icontains'],
             'shipping_class': ['exact'],
+
+            # 'attributes': ['attribute__title__icontains']
         }
 
-class ProductListView(ModelPaginateAndFilterSecond, generics.ListAPIView):
+class ProductListView(CustomFilter, generics.ListAPIView):
     queryset = Product.objects.filter(parent=None)
     serializer_class = ProductSerialList
-    # search_fields = ['id','title', 'slug', 'description', 'short_description', 'sku', 'mpn', ]
-    search_fields = ['id', 'title']
-    ordering_fields = ['id','title', 'slug']
-    filterset_class = ProductFilter
+    pagination_class = CustomPagePagination
+    search_fields = ['id', 'title', 'description']
+    ordering_fields = ['id','title', 'slug', 'regular_price']
+    filterset_fields = {
+        "tax_status": ["exact"],
+        'tax_class': ['exact'],
+        'stock_management': ['exact'],
+        'stock_status': ['exact'],
+
+        'sold_individually': ['exact'],
+        'unit': ['icontains'],
+        'shipping_class': ['exact'],
+
+        'values__slug': ['in'], # values__slug__in=red,green
+        'categories__slug': ['in'], # categories__slug__in=cat-1,cat-2
+
+        'regular_price': ['gte', 'lte'] # regular_price__gte=100&regular_price__lte=
+    }
+    
 
 
     
@@ -129,7 +147,6 @@ class ProductUpdateView(CheckPermission, generics.UpdateAPIView):
         variants_id= [int(x) for x in data.getlist('variants')]
         product = serializer.save()
         
-        print(variants_id)
         variants = product.variants.all().values_list('id', flat=True)
         for variant in variants:
             if not variant in variants_id:

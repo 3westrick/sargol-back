@@ -11,6 +11,11 @@ class CategorySerial(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = ['id', 'title', 'slug','image', 'is_active', 'parent', 'parent_cat']
+        
+    def update(self, instance, validated_data):
+        if validated_data.get('image', None) == None:
+            validated_data['image'] = instance.image
+        return super().update(instance, validated_data)
 
 class CategoryProductSerial(serializers.ModelSerializer):
     parent_cat = InlineCategorySerial(read_only=True, source='parent')

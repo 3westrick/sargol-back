@@ -2,6 +2,7 @@ from rest_framework import serializers
 from product.models import Product, Image, ProductAttribute
 from adminpanel.attribute.serial import AttributeSerial, InlineValueSerial
 import math
+from django.db.models import Q
 
 class ProductGallery(serializers.ModelSerializer):
     class Meta:
@@ -31,6 +32,11 @@ class InlineVariantSerial(serializers.ModelSerializer):
             'sku',
             'title',
             'slug',
+            'type',
+            'quantity',
+            'stock_status',
+            'stock_management',
+            'backorder',
             'attributes',
             'values',
             'regular_price',
@@ -43,6 +49,7 @@ class InlineVariantSerial(serializers.ModelSerializer):
             'width',
             'height',
             'shipping_class',
+            'sold_individually',
 
             'tax_class',
 
@@ -64,10 +71,16 @@ class VariantSerial(serializers.ModelSerializer):
             'sku',
             'title',
             'slug',
+            'type',
+            'quantity',
+            'stock_status',
+            'stock_management',
+            'backorder',
             'attributes',
             'values',
             'regular_price',
             'sale_price',
+            'sold_individually',
 
             'stock',
 
@@ -89,8 +102,8 @@ class VariantSerial(serializers.ModelSerializer):
         ]
 
 class ProductSerialList(serializers.ModelSerializer):
-    gallery = ProductGallery(read_only=True, many=True)
-    attributes = ProductAttributeSerial(read_only=True, many=True)
+    # gallery = ProductGallery(read_only=True, many=True)
+    attributes = serializers.SerializerMethodField(read_only=True)
 
     range = serializers.SerializerMethodField('get_range', read_only=True)
 
@@ -101,6 +114,12 @@ class ProductSerialList(serializers.ModelSerializer):
             'title', 
             'slug',
             'image',
+            'type',
+            'quantity',
+            'stock_status',
+            'stock_management',
+            'backorder',
+            'sold_individually',
 
             'regular_price',
             'sale_price',
@@ -108,12 +127,15 @@ class ProductSerialList(serializers.ModelSerializer):
             'stock',
 
             'attributes',
-            'values',
+            # 'values',
             
-            'gallery',
+            # 'gallery',
             'range',
 
             ]
+    
+    def get_attributes(self,obj):
+        return [ attribute.attribute.id for attribute in obj.attributes.all() ]
 
     def get_range(self, obj):
         variants = obj.variants.all()
@@ -143,6 +165,11 @@ class ProductSerial(serializers.ModelSerializer):
             'slug', 
             'description', 
             'short_description', 
+            'type',
+            'quantity',
+            'stock_status',
+            'stock_management',
+            'backorder',
 
             'categories',
             'image',
@@ -154,8 +181,6 @@ class ProductSerial(serializers.ModelSerializer):
 
             'sku',
             'mpn',
-            'stock_management',
-            'stock_status',
             'sold_individually',
             'stock',
             'unit',
@@ -193,6 +218,7 @@ class ProductSingleSerial(serializers.ModelSerializer):
     gallery = ProductGallery(read_only=True, many=True)
     attributes = ProductAttributeSerial(read_only=True, many=True)
     values = InlineValueSerial(read_only=True, many=True)
+    related = serializers.SerializerMethodField(read_only=True)
     class Meta:
         model = Product
         fields = [
@@ -212,8 +238,11 @@ class ProductSingleSerial(serializers.ModelSerializer):
 
             'sku',
             'mpn',
-            'stock_management',
+            'type',
+            'quantity',
             'stock_status',
+            'stock_management',
+            'backorder',
             'sold_individually',
             'stock',
             'unit',
@@ -229,10 +258,24 @@ class ProductSingleSerial(serializers.ModelSerializer):
             
             'variants',
 
-            'gallery'
+            'gallery',
+
+            'related'
 
             ]
     
+    def get_related(self, obj):
+        attributes = []
+        for pa in obj.attributes.all():
+            attributes.append(pa.attribute)
+
+        related_products = Product.objects.filter(
+            Q(attributes__attribute__in=attributes) |
+            Q(categories__in=obj.categories.all())
+        )[:5]
+
+        data = InlineVariantSerial(related_products,many=True).data
+        return data
 
 class ProductSecondSerial(serializers.ModelSerializer):
     class Meta:
@@ -245,6 +288,11 @@ class ProductSecondSerial(serializers.ModelSerializer):
             'short_description', 
             'price',
             'quantity',
+            'type',
+            'stock_status',
+            'stock_management',
+            'backorder',
+            'sold_individually',
 
             'category',
             'attributes',

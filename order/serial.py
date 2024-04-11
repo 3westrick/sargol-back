@@ -88,6 +88,7 @@ class ItemListSerial(serializers.ModelSerializer):
 
 
 class OrderSerial(serializers.ModelSerializer):
+    items = ItemListSerial(many=True, read_only=True)
     class Meta:
         model = Order
         fields = ['id', 'status', 'items',]

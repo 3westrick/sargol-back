@@ -6,7 +6,8 @@ from adminpanel.value.serial import ValueSerial, ValueAttributeSerial
 
 from rest_framework import generics, mixins, permissions, authentication
 from base.mixins import CheckPermission
-from base.pagination import ModelPaginateAndFilter, ModelPaginateAndFilterSecond
+from base.pagination import CustomLimitOffsetPagtination
+from base.filters import CustomFilter
 import django_filters
 
 
@@ -20,9 +21,10 @@ class ValueFilter(django_filters.FilterSet):
             'attribute__id': ['exact'],
         }
 
-class ValueListView(CheckPermission, ModelPaginateAndFilterSecond,generics.ListAPIView):
+class ValueListView(CheckPermission, CustomFilter, generics.ListAPIView):
     queryset = Value.objects.all()
     serializer_class = ValueAttributeSerial
+    pagination_class = CustomLimitOffsetPagtination
     search_fields = ['title', 'slug']
     ordering_fields = ['id','title','slug']
     filterset_class = ValueFilter
@@ -36,9 +38,6 @@ class ValueRetriveView(CheckPermission, generics.RetrieveAPIView):
 class ValueCreateView(CheckPermission, generics.CreateAPIView):
     queryset = Value.objects.all()
     serializer_class = ValueAttributeSerial
-
-    def perform_create(self, serializer):
-        serializer.save()
 
 class ValueUpdateView(CheckPermission, generics.UpdateAPIView):
     queryset = Value.objects.all()

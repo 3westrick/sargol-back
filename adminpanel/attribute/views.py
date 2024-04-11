@@ -6,14 +6,15 @@ from adminpanel.attribute.serial import AttributeSerial
 
 from rest_framework import generics
 from base.mixins import CheckPermission
-from base.pagination import ModelPaginateAndFilter
+from base.pagination import CustomLimitOffsetPagtination
+from base.filters import CustomSearch
 from adminpanel.attribute.filters import AttributeFilter
 # Create your views here.
 
-class AttributeListView(CheckPermission, ModelPaginateAndFilter,generics.ListAPIView):
+class AttributeListView(CheckPermission, CustomSearch,generics.ListAPIView):
     queryset = Attribute.objects.all()
     serializer_class = AttributeSerial
-
+    pagination_class = CustomLimitOffsetPagtination
     search_fields = ['title', 'slug', 'values__title']
     ordering_fields = ['id','title', 'slug', 'type']
 

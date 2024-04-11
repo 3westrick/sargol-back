@@ -1,14 +1,29 @@
-from rest_framework.pagination import LimitOffsetPagination
-from rest_framework.filters import  OrderingFilter, SearchFilter
-from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.pagination import LimitOffsetPagination, PageNumberPagination
+from rest_framework.response import Response
 
-class MyLimitOffsetPagtination(LimitOffsetPagination):
+class CustomLimitOffsetPagtination(LimitOffsetPagination):
     default_limit = 10
 
-class ModelPaginateAndFilter():
-    pagination_class = MyLimitOffsetPagtination
-    filter_backends = [SearchFilter, OrderingFilter, ]
 
-class ModelPaginateAndFilterSecond():
-    pagination_class = MyLimitOffsetPagtination
-    filter_backends = [DjangoFilterBackend,SearchFilter, OrderingFilter, ]
+class CustomPagePagination(PageNumberPagination):
+    page_size = 12
+
+    def get_next_number(self):
+        if not self.page.has_next():
+            return None
+        return self.page.next_page_number()
+    
+    def get_previous_number(self):
+        if not self.page.has_previous():
+            return None
+        return self.page.previous_page_number()
+
+    def get_paginated_response(self, data):
+        return Response({
+            'previous': self.get_previous_number(),
+            'next': self.get_next_number(),
+            'count': self.page.paginator.count,
+            'results': data
+        })
+    
+

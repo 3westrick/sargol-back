@@ -9,11 +9,13 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 
-from base.pagination import ModelPaginateAndFilterSecond
+from base.pagination import CustomLimitOffsetPagtination
+from base.filters import CustomSearch
 
-class CouponListView(CheckPermission, ModelPaginateAndFilterSecond, generics.ListAPIView):
+class CouponListView(CheckPermission, CustomSearch, generics.ListAPIView):
     queryset = Coupon.objects.all()
     serializer_class = CouponSerial
+    pagination_class = CustomLimitOffsetPagtination 
     search_fields = ['id', 'title', 'description']
     ordering_fields = ['id','title', ]
 

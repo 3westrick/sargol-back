@@ -13,7 +13,8 @@ from base.mixins import CheckAuth
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAdminUser, DjangoModelPermissions, IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from base.pagination import ModelPaginateAndFilterSecond
+from base.pagination import CustomPagePagination, CustomLimitOffsetPagtination
+from base.filters import CustomSearch
 
 class ItemListView(CheckAuth, generics.ListAPIView):
     queryset = Item.objects.all()
@@ -48,11 +49,13 @@ class ItemDeleteView(CheckAuth,generics.DestroyAPIView):
             raise ValidationError("Not Authorized")
         return super().perform_destroy(instance)
 
-class OrderListView(CheckAuth, ModelPaginateAndFilterSecond ,generics.ListAPIView): 
+class OrderListView(CheckAuth, CustomSearch ,generics.ListAPIView): 
     queryset = Order.objects.all()
     serializer_class = OrderSerial
+    pagination_class = CustomLimitOffsetPagtination
     search_fields = ['id', 'status']
     ordering_fields = ['id','status']
+    pagination_class = CustomPagePagination
 
     def get_queryset(self):
         self.queryset = self.queryset.filter(user=self.request.user)
@@ -209,7 +212,6 @@ def purchase(request):
         order.price = final_price
         order.save()
         user.basket.all().delete()
-        print(order.coupons.all())
 
     else:
         items = user.basket.all()
