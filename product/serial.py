@@ -3,6 +3,7 @@ from product.models import Product, Image, ProductAttribute
 from adminpanel.attribute.serial import AttributeSerial, InlineValueSerial
 import math
 from django.db.models import Q
+from option.models import Option
 
 class ProductGallery(serializers.ModelSerializer):
     class Meta:
@@ -106,6 +107,7 @@ class ProductSerialList(serializers.ModelSerializer):
     attributes = serializers.SerializerMethodField(read_only=True)
 
     range = serializers.SerializerMethodField('get_range', read_only=True)
+    tax_price = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Product
@@ -127,11 +129,9 @@ class ProductSerialList(serializers.ModelSerializer):
             'stock',
 
             'attributes',
-            # 'values',
             
-            # 'gallery',
             'range',
-
+            'tax_price'
             ]
     
     def get_attributes(self,obj):
@@ -139,7 +139,8 @@ class ProductSerialList(serializers.ModelSerializer):
 
     def get_range(self, obj):
         variants = obj.variants.all()
-        if len(variants) == 0:return obj.regular_price
+        if len(variants) == 0: 
+            return obj.regular_price
         min_price = math.inf
         max_price = -math.inf
         for variant in variants:
@@ -147,6 +148,11 @@ class ProductSerialList(serializers.ModelSerializer):
             max_price = max(max_price, variant.regular_price)
         return f"{min_price} - {max_price}"
 
+    # def get_tax_price(self, obj):
+    #     if Option.objects.get(title='price_entered_with_tax').value == 'no':
+    #         if Option.objects.get(title = 'display_prices_in_the_shop').value == 'include':
+    #             print(obj.tax_class)
+    #     return False
 
 
 class ProductSerial(serializers.ModelSerializer):

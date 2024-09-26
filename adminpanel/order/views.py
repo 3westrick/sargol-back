@@ -10,14 +10,17 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from base.pagination import CustomLimitOffsetPagtination
-from base.filters import CustomSearch
+from base.filters import CustomSearch, CustomFilter
 
-class OrderListView(CheckPermission, CustomSearch, generics.ListAPIView):
+class OrderListView(CheckPermission, CustomFilter, generics.ListAPIView):
     queryset = Order.objects.all()
     serializer_class = OrderSerial
     pagination_class = CustomLimitOffsetPagtination
     search_fields = ['id', 'status']
     ordering_fields = ['id','status']
+    filterset_fields = {
+        "status": ["exact"],
+    }
 
 
 class OrderRetrieveView(CheckPermission, generics.RetrieveAPIView):

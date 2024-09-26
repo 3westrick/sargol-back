@@ -3,10 +3,10 @@ from rest_framework import generics
 from base.mixins import CheckPermission
 from base.pagination import CustomLimitOffsetPagtination
 from base.filters import CustomSearch, CustomFilter
-from widget.models import WidgetGroup, Widget
+from widget.models import Widgetgroup, Widget
 
 class WidgetGroupListView(CheckPermission, CustomSearch,generics.ListAPIView):
-    queryset = WidgetGroup.objects.all()
+    queryset = Widgetgroup.objects.all()
     serializer_class = WidgetGroupSerial
 
 
@@ -18,7 +18,6 @@ class WidgetListView(CheckPermission, CustomFilter,generics.ListAPIView):
         "group__type": ["exact"],
     }
     def list(self, request, *args, **kwargs):
-        print(self.request.data)
         return super().list(request, *args, **kwargs)
     
 
@@ -30,6 +29,7 @@ class WidgetUpdateView(CheckPermission, generics.UpdateAPIView):
     queryset = Widget.objects.all()
     serializer_class = WidgetUpdateSerial
     lookup_field = 'pk'
+
     
 class WidgetRetriveView(CheckPermission, generics.RetrieveAPIView):
     queryset = Widget.objects.all()
@@ -41,23 +41,4 @@ class WidgetDeleteView(CheckPermission, generics.DestroyAPIView):
     queryset = Widget.objects.all()
     serializer_class = WidgetCreateSerial
     lookup_field = 'pk'
-
-# class AttributeRetriveView(CheckPermission, generics.RetrieveAPIView):
-#     queryset = Attribute.objects.all()
-#     serializer_class = AttributeSerial
-#     lookup_field = 'pk'
-
-# class AttributeCreateView(CheckPermission, generics.CreateAPIView):
-#     queryset = Attribute.objects.all()
-#     serializer_class = AttributeSerial
-
-# class AttributeUpdateView(CheckPermission, generics.UpdateAPIView):
-#     queryset = Attribute.objects.all()
-#     serializer_class = AttributeSerial
-#     lookup_field = 'pk'
-
-# class AttributeDeleteView(CheckPermission, generics.DestroyAPIView):
-#     queryset = Attribute.objects.all()
-#     serializer_class = AttributeSerial
-#     lookup_field = 'pk'
 

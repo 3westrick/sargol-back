@@ -22,12 +22,20 @@ class UserPermission(serializers.ModelSerializer):
     
 class UserTestSerial(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, validators=[validate_password], allow_blank=True)
-
+    name = serializers.SerializerMethodField(read_only=True)
     class Meta:
         model = User
         fields = [
             'id',
+            'first_name',
+            'last_name',
+            'name',
             'username',
+            'phone',
+            'country',
+            'city',
+            'address',
+            'post_code',
             'password',
             'email',
             'user_permissions',
@@ -45,3 +53,6 @@ class UserTestSerial(serializers.ModelSerializer):
         else:
             validated_data['password'] = make_password(validated_data.get('password'))
         return super().update(instance, validated_data)
+    
+    def get_name(self, user: User):
+        return user.get_full_name()

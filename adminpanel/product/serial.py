@@ -32,7 +32,6 @@ class InlineVariantSerial(serializers.ModelSerializer):
             'regular_price',
             'sale_price',
 
-            'stock',
 
             'weight',
             'length',
@@ -48,6 +47,8 @@ class InlineVariantSerial(serializers.ModelSerializer):
             'image',
             'gallery'
         ]
+    
+
 
 
 class ProductAttributeSerial(serializers.ModelSerializer):
@@ -77,7 +78,6 @@ class VariantSerial(serializers.ModelSerializer):
             'regular_price',
             'sale_price',
 
-            'stock',
 
             'weight',
             'length',
@@ -102,6 +102,7 @@ class ProductSerial(serializers.ModelSerializer):
     variants = InlineVariantSerial(read_only=True, many=True)
     gallery = ProductGallery(read_only=True, many=True)
     attributes = ProductAttributeSerial(read_only=True, many=True)
+    title = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Product
@@ -145,6 +146,11 @@ class ProductSerial(serializers.ModelSerializer):
             'gallery'
 
             ]
+    def get_title(self, product):
+        if product.type == 'variant':
+            values = product.values.all().values_list('title',flat=True)
+            return (product.parent.title + f" ({''.join(list(values))})" )
+        return product.title
         
 
 class ProductSingleSerial(serializers.ModelSerializer):

@@ -14,6 +14,7 @@ from rest_framework.decorators import api_view, permission_classes, authenticati
 from base.pagination import CustomLimitOffsetPagtination
 from base.filters import CustomFilter
 import django_filters
+from django.db.models import Count
 # Create your views here.
 
 class ProductFilter(django_filters.FilterSet):
@@ -21,14 +22,7 @@ class ProductFilter(django_filters.FilterSet):
         model = Product
         # fields = ['title']
         fields = {
-            'tax_status': ['exact'],
-            'tax_class': ['exact'],
-            'stock_management': ['exact'],
-            'stock_status': ['exact'],
-
-            'sold_individually': ['exact'],
-            'unit': ['icontains'],
-            'shipping_class': ['exact'],
+            'parent': ['isnull'],
         }
 
 class ProductListView(CheckPermission, CustomFilter, generics.ListAPIView):
@@ -38,9 +32,18 @@ class ProductListView(CheckPermission, CustomFilter, generics.ListAPIView):
     # search_fields = ['id','title', 'slug', 'description', 'short_description', 'sku', 'mpn', ]
     search_fields = ['id', 'title']
     ordering_fields = ['id','title', 'slug']
-    filterset_class = ProductFilter
+    # filterset_class = ProductFilter
 
-
+class ProductCouponListView(CheckPermission, CustomFilter, generics.ListAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerial
+    pagination_class = CustomLimitOffsetPagtination
+    # search_fields = ['id','title', 'slug', 'description', 'short_description', 'sku', 'mpn', ]
+    search_fields = ['id', 'title']
+    ordering_fields = ['id','title', 'slug']
+    def get_queryset(self):
+        self.queryset = (self.queryset.annotate(num_variants=Count('variants')).filter(num_variants=0))
+        return super().get_queryset()
     
 class ProductRetriveView(CheckPermission, generics.RetrieveAPIView):
     queryset = Product.objects.filter(parent=None)
@@ -100,6 +103,9 @@ class VariantEditView(CheckPermission, generics.UpdateAPIView):
     def perform_update(self, serializer):
         data = self.request.data
         product = serializer.save()
+
+        product.stock_management = product.parent.stock_management
+
         product.attributes.all().delete()
 
         parent_attrbiutes = product.parent.attributes.filter(variant=True)
@@ -111,6 +117,8 @@ class VariantEditView(CheckPermission, generics.UpdateAPIView):
 
         old_images_ids = [ int(x) for x in gallery if type(x) == str]
         new_images = [ x for x in gallery if type(x) != str]
+
+        
         
         for i in product_gallery:
             if not i in old_images_ids:
@@ -130,9 +138,9 @@ class ProductUpdateView(CheckPermission, generics.UpdateAPIView):
     def perform_update(self, serializer):
         data = self.request.data
         variants_id= [int(x) for x in data.getlist('variants')]
+        
         product = serializer.save()
         
-        print(variants_id)
         variants = product.variants.all().values_list('id', flat=True)
         for variant in variants:
             if not variant in variants_id:

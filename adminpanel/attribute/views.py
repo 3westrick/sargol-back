@@ -18,6 +18,13 @@ class AttributeListView(CheckPermission, CustomSearch,generics.ListAPIView):
     search_fields = ['title', 'slug', 'values__title']
     ordering_fields = ['id','title', 'slug', 'type']
 
+
+class AttributeAllListView(CheckPermission,generics.ListAPIView):
+    queryset = Attribute.objects.all()
+    serializer_class = AttributeSerial
+    search_fields = ['title', 'slug', 'values__title']
+    ordering_fields = ['id','title', 'slug', 'type']
+
     # authentication_classes = [] # removes all auth methos
     # permission_classes = []
 

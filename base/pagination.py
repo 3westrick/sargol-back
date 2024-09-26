@@ -6,7 +6,7 @@ class CustomLimitOffsetPagtination(LimitOffsetPagination):
 
 
 class CustomPagePagination(PageNumberPagination):
-    page_size = 12
+    page_size = 2
 
     def get_next_number(self):
         if not self.page.has_next():

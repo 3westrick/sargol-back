@@ -6,7 +6,10 @@ urlpatterns = [
     path("", views.OrderListView.as_view()),
 
     path("purchase/", views.purchase),
-    path("items/", views.ItemListView.as_view()),
+    path("items/", views.BasketView.as_view()),
+    path("basket/", views.BasketView.as_view()),
+    path("basket/update/", views.update_basket),
+    path("basket/create/", views.create_basket),
     path("items/create/", views.ItemCreateView.as_view()),
     path("items/edit/<int:pk>/", views.ItemEditView.as_view()),
     path("items/delete/<int:pk>/", views.ItemDeleteView.as_view()),

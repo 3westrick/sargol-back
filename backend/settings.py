@@ -27,7 +27,9 @@ SECRET_KEY = "django-insecure-_=-ko&+4q3r+gt6xl9uuwptldbox)-&0ig^et^^x4n^!yfp^x=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    # '192.168.55.66'
+]
 
 
 # Application definition
@@ -52,10 +54,14 @@ INSTALLED_APPS = [
     'product',
     'coupon',
     'widget',
+    'shipping',
+    'tax',
+
 
     'images',
 
     'order',
+    'option',
 
     "adminpanel",
 ]
@@ -148,9 +154,16 @@ MEDIA_URL = 'media/'
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
-CORS_ALLOW_ALL_ORIGINS = True
 
 REST_FRAMEWORK = {
+
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        # 'rest_framework.permissions.IsAuthenticated',
+    ],
     # "DEFAULT_AUTHENTICATION_CLASSES":[
     #     "rest_framework.authentication.SessionAuthentication",
     #     "rest_framework.authentication.TokenAuthentication",
@@ -163,7 +176,7 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
+    "ACCESS_TOKEN_LIFETIME": timedelta(seconds=5),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=90),
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,
